@@ -1,0 +1,592 @@
+
+# In[1]:
+
+
+import pandas as pd
+
+
+# # Transforming data
+
+# In[2]:
+
+
+df = pd.read_csv("Employee data.csv")
+
+
+# In[3]:
+
+
+df.info()
+
+
+# In[4]:
+
+
+df.shape
+
+
+# In[6]:
+
+
+#print(df)
+df.head()
+
+
+# In[7]:
+
+
+df.describe()
+
+
+# In[9]:
+
+
+df.values
+
+
+# In[10]:
+
+
+df.columns
+
+
+# In[11]:
+
+
+df.index
+
+
+# ## Sorting and subsetting
+
+# **sorting**
+
+# In[13]:
+
+
+df.sort_values("educ").head()
+
+
+# In[14]:
+
+
+df.sort_values("educ",ascending=False).head()
+
+
+# In[15]:
+
+
+df.sort_values(["educ","jobcat"]).head()
+
+
+# In[17]:
+
+
+df.sort_values(["educ","jobcat"],ascending=[True,False]).head()
+
+
+# **subsetting**
+
+# In[19]:
+
+
+df["id"].head()
+
+
+# In[20]:
+
+
+df[["id","bdate"]].head()
+
+
+# In[23]:
+
+
+df[df["id"]>100].head()
+
+
+# In[24]:
+
+
+df[df['gender']=='f'].head()
+
+
+# In[25]:
+
+
+df[df['bdate']>"1947-4-15"].head() #subset through date
+
+
+# In[28]:
+
+
+#multiple conditions
+df[(df["bdate"]>"1947-4-15") & (df["gender"]=="m")].head()
+
+
+# In[30]:
+
+
+condition1 = df["bdate"]>"1947-4-15"
+condition2 = df["gender"]=="m"
+df[condition1 & condition2].head()
+
+
+# In[32]:
+
+
+is_in = df["educ"].isin([15,16])
+df[is_in].head()
+
+
+# ## Adding new column
+
+# In[42]:
+
+
+df["jobtime_t"] = (df["jobtime"])/12
+df.head()
+
+
+# # Aggregating data
+
+# ## summary statistics
+
+# In[48]:
+
+
+df['educ'].mean()
+
+
+# In[49]:
+
+
+df['educ'].median()
+
+
+# In[50]:
+
+
+df['educ'].min()
+
+
+# In[51]:
+
+
+df['educ'].max()
+
+
+# In[52]:
+
+
+df['educ'].sum()
+
+
+# In[53]:
+
+
+df['educ'].var()
+
+
+# In[54]:
+
+
+df['educ'].std()
+
+
+# In[58]:
+
+
+df['educ'].quantile(0.8)
+
+
+# In[61]:
+
+
+df[['educ','jobtime']].quantile(0.8)
+
+
+# In[63]:
+
+
+df['educ'].cumsum().head() #cummax(),cummin(),cumprod() are all useful
+
+
+# ## Counting
+
+# In[67]:
+
+
+df_new = df.drop_duplicates(subset="gender")
+
+
+# In[68]:
+
+
+df_new
+
+
+# In[70]:
+
+
+df_new1 = df.drop_duplicates(subset=["bdate","jobcat"])
+df_new1.head()
+
+
+# In[71]:
+
+
+df_new1["gender"].value_counts()
+
+
+# In[75]:
+
+
+df_new1["gender"].value_counts(sort=True,ascending=True)
+
+
+# In[77]:
+
+
+df_new1["jobtime"].value_counts(normalize=True).head()
+
+
+# ## Grouped summary statistics
+
+# In[78]:
+
+
+df_new1[df_new1.gender=='f']['educ'].mean()
+
+
+# In[79]:
+
+
+df_new1.groupby("gender")['educ'].mean()
+
+
+# In[81]:
+
+
+df_new1.groupby("gender")['educ'].agg([min,max,sum])
+
+
+# In[82]:
+
+
+df_new1.groupby(['educ','jobcat'])['jobtime'].mean()
+
+
+# In[83]:
+
+
+df_new1.groupby(['educ','jobcat'])[['jobtime','prevexp']].mean()
+
+
+# ## Pivot tables
+
+# In[86]:
+
+
+df.groupby(['educ'])['jobtime'].mean().head()
+
+
+# In[87]:
+
+
+df.pivot_table(values='jobtime',index='educ').head()
+
+
+# In[88]:
+
+
+import numpy as np
+
+
+# In[91]:
+
+
+df.pivot_table(values='jobtime',index='educ',aggfunc=np.median).head()
+
+
+# In[93]:
+
+
+df.pivot_table(values='jobtime',index='educ',aggfunc=[np.mean,np.median]).head()
+
+
+# In[94]:
+
+
+df_new1.groupby(['educ','jobcat'])[['jobtime','prevexp']].mean()
+
+
+# In[95]:
+
+
+df_new1.pivot_table(values=['jobtime','prevexp'],index=['educ','jobcat'])
+#if there are missing value, we can use argument:fill_value=0 to fill missing value as 0
+
+
+# In[100]:
+
+
+df_new1.pivot_table(values='jobtime',index=['educ','jobcat'],fill_value=0,margins=True)
+
+
+# In[99]:
+
+
+df_new1.pivot_table(values='jobtime',index='educ',columns='jobcat',fill_value=0,margins=True)
+
+
+# # Slicing and index
+
+# In[101]:
+
+
+df.head()
+
+
+# In[102]:
+
+
+df.index
+
+
+# In[103]:
+
+
+#set index
+df_ind = df.set_index('id')
+df_ind.head()
+
+
+# **index values do not need to be unique**
+
+# In[115]:
+
+
+df_ind1 = df.set_index('educ')
+df_ind1.loc[15].head()
+
+
+# In[105]:
+
+
+#remove index
+df_ind.reset_index().head()
+
+
+# In[106]:
+
+
+#drop index
+df_ind.reset_index(drop=True).head()
+
+
+# In[108]:
+
+
+#one advantage of index: make subsetting easier
+df[df['id'].isin([1,2,3])]
+
+
+# In[109]:
+
+
+df_ind.loc[[1,2,3]]
+
+
+# **multiple index**
+
+# In[116]:
+
+
+df_ind3 = df.set_index(['bdate','educ'])
+df_ind3.head()
+
+
+# In[118]:
+
+
+df_ind3.loc[['3-Feb-1952','23-May-1958']]
+
+
+# In[119]:
+
+
+df_ind3.loc[[('3-Feb-1952',15),('23-May-1958',16)]]
+
+
+# In[121]:
+
+
+df_ind3.sort_index().head()
+
+
+# In[133]:
+
+
+df_ind4 = df_ind3.sort_index(level=['educ','bdate'],ascending=[False,True])
+df_ind4.head()
+
+
+# ## Pivot table
+
+# In[146]:
+
+
+df1 = df.pivot_table('jobtime',index='jobcat',columns='gender',fill_value=0)
+df1
+
+
+# In[148]:
+
+
+df1.loc[1:2]
+
+
+# In[149]:
+
+
+df1.mean(axis='index')
+
+
+# In[150]:
+
+
+df1.mean(axis='columns')
+
+
+# # visualizing
+
+# In[159]:
+
+
+import matplotlib.pyplot as plt
+
+
+# **Histogram**
+
+# In[160]:
+
+
+df['educ'].hist(bins=5)
+
+
+# **bar plot**
+
+# In[169]:
+
+
+f=lambda x: x.replace("$", "")
+f1=lambda x: x.replace(",", "")
+df['salary1']=df['salary'].map(f)
+df['salary1']=df['salary1'].map(f1)
+df['salary1'] = pd.to_numeric(df['salary1'])
+df.head()
+
+
+# In[171]:
+
+
+avg_sa = df.groupby('jobcat')['salary1'].mean()
+avg_sa
+
+
+# In[172]:
+
+
+avg_sa.plot(kind='bar')
+
+
+# In[173]:
+
+
+avg_sa.plot(kind='bar',title='the average salary for jobcat')
+
+
+# In[174]:
+
+
+avg_sa.plot(x='bdate',y='salary1',kind='line')
+
+
+# In[191]:
+
+
+df.plot(x='bdate',y='salary1',kind='line',rot=45)
+
+
+# In[187]:
+
+
+df.plot(x='educ',y='salary1',kind='scatter',rot=45)
+
+
+# In[196]:
+
+
+df[df.gender=='m']['salary1'].hist()
+df[df.gender=='f']['salary1'].hist(alpha=0.7)
+plt.legend(["M","F"])
+
+
+# ## Missing value
+
+# In[198]:
+
+
+mydf = pd.read_csv('employee3.csv')
+mydf.head()
+
+
+# In[200]:
+
+
+mydf.isna().head()
+
+
+# In[201]:
+
+
+mydf.isna().any()
+
+
+# In[202]:
+
+
+mydf.isna().sum()
+
+
+# In[203]:
+
+
+mydf.isna().sum().plot(kind='bar')
+
+
+# In[206]:
+
+
+mydf.dropna().head()
+
+
+# In[208]:
+
+
+mydf.fillna(0).head()
+
+
+# ## Write data frame to csv
+
+# In[209]:
+
+
+mydf1 = mydf.dropna()
+
+
+# In[210]:
+
+
+mydf1.to_csv('employee4.csv')
+
