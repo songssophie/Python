@@ -1,0 +1,219 @@
+# In[1]:
+
+
+import pandas as pd
+
+
+# ## Obtain data frame
+
+# **Data frame from dictionary**
+
+# In[4]:
+
+
+dictionary = {"country":["Brazil", "Russia", "India", "China", "South Africa"], 
+        "capital":["Brasilia", "Moscow", "New Delhi", "Beijing", "Pretoria"], 
+        "area":[8.516, 17.10, 3.286, 9.597, 1.221],
+        "population":[200.4, 143.5, 1252, 1357, 52.98]}
+
+
+# In[6]:
+
+
+brics = pd.DataFrame(dictionary)
+brics
+
+
+# **Data frame from csv**
+
+# In[8]:
+
+
+brics = pd.read_csv("brics.csv")
+brics
+
+
+# In[9]:
+
+
+brics = pd.read_csv("brics.csv",index_col=0)
+brics
+
+
+# ## Index and select
+
+# In[10]:
+
+
+brics["country"]
+
+
+# In[11]:
+
+
+type(brics["country"]) #1D labelled array
+
+
+# In[12]:
+
+
+brics[["country"]]
+
+
+# In[13]:
+
+
+type(brics[["country"]])
+
+
+# In[15]:
+
+
+brics[["country","capital"]] #extract colums
+
+
+# In[16]:
+
+
+brics[1:4] #extrac rows
+
+
+# In[17]:
+
+
+#use loc to extract rows, loc-label
+brics.loc["RU"]
+
+
+# In[18]:
+
+
+type(brics.loc["RU"])
+
+
+# In[19]:
+
+
+brics.loc[["RU"]]
+
+
+# In[20]:
+
+
+brics.loc[["RU","CH"]]
+
+
+# In[21]:
+
+
+brics.loc[["RU","CH"],["country","capital"]]
+
+
+# In[23]:
+
+
+brics.loc[:,["country","capital"]]
+
+
+# In[24]:
+
+
+#use iloc
+brics.iloc[:,[1,2]]
+
+
+# In[25]:
+
+
+brics.iloc[[0,2,4],[1,2]]
+
+
+# ## Filter
+
+# In[26]:
+
+
+brics["area"]
+
+
+# In[27]:
+
+
+brics["area"]>8
+
+
+# In[28]:
+
+
+is_huge = brics["area"]>8
+brics[is_huge]
+
+
+# In[29]:
+
+
+import numpy as np
+
+
+# In[30]:
+
+
+condition = np.logical_and(brics["area"]>8,brics["area"]<10)
+brics[condition]
+
+
+# ## Loops
+
+# In[31]:
+
+
+for i in brics:
+    print(i)
+
+
+# In[34]:
+
+
+for m,n in brics.iterrows():
+    print(m)
+    print(n)
+
+
+# **selective print**
+
+# In[36]:
+
+
+for m,n in brics.iterrows():
+    print(m+":"+n["capital"])
+
+
+# **Add column**
+
+# In[39]:
+
+
+for m,n in brics.iterrows():
+    brics.loc[m,"name_length"]=len(n["capital"])
+print(brics)
+
+
+# **Apply function**
+
+# In[40]:
+
+
+brics = pd.read_csv("brics.csv",index_col=0)
+
+
+# In[41]:
+
+
+brics["name_length"]=brics["capital"].apply(len)
+
+
+# In[42]:
+
+
+brics
+
